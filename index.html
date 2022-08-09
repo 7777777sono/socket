@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web上で行うsocket通信</title>
+    <link rel="icon" href="C:\prog\Web\artifact-list\socket-cgi\23976036_s.jpg" type="image/png"/>
+    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css" />
+    <link rel="stylesheet" href="highlight/styles/an-old-hope.min.css" />
+    <link rel="stylesheet" href="style.css">
+    <script src="highlight/highlight.min.js"></script>
+    <script type="text/javascript">
+      hljs.initHighlightingOnLoad();
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="header-zone">
+        <div class="header-title-zone">
+          <h1>Web上で行うソケット間通信</h1>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="main-zone">
+        <div class="introduction-zone">
+          <div class="title-zone">
+            <h2>導入</h2>
+          </div>
+          <div class="text-zone">
+            <p>
+              今回は、CGIプログラムによってソケット通信を実現した。今回このようなものを作成した理由は、大学の実験でソケット間通信を作成したがもっと改良したいと思ったからである。
+            </p>
+          </div>
+        </div>
+        <div class="description-zone">
+          <div class="cgi-socket-title-zone">
+            <h3 class="sub-zone">
+              まずこの機能を説明する前にCGIプログラムとソケット間通信について説明する。
+            </h3>
+          </div>
+          <div class="socket-description-zone">
+            <div class="socket-description-title-zone">
+              <h3 class="sub-zone">ソケット間通信</h3>
+            </div>
+            <div class="socket-description-main-zone">
+              <p>
+                ソケット
+                インターネットはTCP/IPと呼ぶ通信プロトコルを利用するが、そのTCP/IPをプログラムから利用するには、プログラムの世界とTCP/IPの世界を結ぶ特別な出入り口が必要となる。
+                その出入り口となるのがソケット(Socket)であり、TCP/IPのプログラミング上の大きな特徴となる。
+              </p>
+              <div class="socket-reference-zone">
+                <h4>引用元:</h4>
+                <a href="http://research.nii.ac.jp/~ichiro/syspro98/socket.html"
+                  >http://research.nii.ac.jp/~ichiro/syspro98/socket.html</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="cgi-description-zone">
+            <div class="cgi-description-title-zone">
+              <h3 class="sub-zone">CGIプログラム</h3>
+            </div>
+            <div class="cgi-description-main-zone">
+              <p>
+                CGIとは、Webサーバが、Webブラウザなどからの要求に応じてプログラムを実行する仕組みの一つである。
+              </p>
+              <div class="cgi-reference-zone">
+                <h4>引用元:</h4>
+                <a href="https://e-words.jp/w/CGI.html"
+                  >https://e-words.jp/w/CGI.html</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="implementation-method-zone">
+        <div class="implementation-method-title-zone">
+          <div class="title-zone">
+            <h2>概要</h2>
+          </div>
+        </div>
+        <div class="implementation-method-main-zone">
+          <p>
+            1. まず、メッセージを入力するためのindex.htmlにアクセスする。<br />
+            2.
+            5秒経過し、何も入力の動作がなければ、皆がコメントした内容を閲覧できるようにするためのawaiting.pyにこれまでに入力した内容をPOSTする。<br />
+            3.
+            送信ボタンを押したら、client.pyにれまでに入力した内容をPOSTする。<br />
+            4. client.pyは、入力された値をserver.pyに送信する。<br />
+            5.
+            server.pyは、client.pyから送られた内容とその受信した時刻をlog.txtに書き込む。<br />
+            6. client.pyでも、5秒経過しても何も入力の動作がなければ、2に戻る。
+          </p>
+        </div>
+        <div class="method-detail-zone">
+          <div class="method-detail-title-zone">
+            <div class="title-zone">
+              <h2>動作に関する説明</h2>
+            </div>
+          </div>
+          <div class="method-detail-main-zone">
+            <div class="server-zone">
+              <h3 class="sub-zone">server.py</h3>
+              <pre><code class="Python">
+import socket
+import threading
+import datetime
+
+# サーバーIPとポート番号
+IPADDR = "localhost" # 自身のIPアドレス
+PORT = 55000
+
+# ファイルの中身初期化
+f = open("log.txt","w")
+f.close()
+
+sock_sv = socket.socket(socket.AF_INET)
+sock_sv.bind((IPADDR, PORT))
+sock_sv.listen()
+
+
+# データ受信ループ関数
+def recv_client(sock, addr):
+    while True:
+        try:
+            data = sock.recv(1024)
+            # 受信データ0バイト時は接続終了
+            if data == b"":
+                break
+            print("{}からメッセージを受諾".format(addr))
+            now = datetime.datetime.now()
+            now = str(now)
+            buf = str(data.decode("utf-8")) + " " + now + '\n'
+            f = open('log.txt', 'a', encoding='UTF-8')
+            f.write(buf)
+            f.close()
+        # 切断時の例外を捕捉したら終了
+        except ConnectionResetError:
+            break
+
+    # クライアントをクローズ処理
+    sock.shutdown(socket.SHUT_RDWR)
+    sock.close()
+
+print("今からチャットを受け付けます。")
+
+# クライアント接続ループ
+while True:
+    # クライアントの接続受付
+    sock_cl, addr = sock_sv.accept()
+    # スレッドクラスのインスタンス化
+    thread = threading.Thread(target=recv_client, args=(sock_cl, addr))
+    # スレッド処理開始
+    thread.start()
+
+              </code></pre>
+              <div class="server-detail-zone">
+                <p>
+                  1. sock_sv =
+                  socket.socket(socket.AF_INET)でソケットを作成する。<br />
+                  2. sock_sv.bind((IPADDR,
+                  PORT))でポート番号とIPアドレスを割り当てる。<br />
+                  3. sock_sv.listen()で接続を受け付けを開始。<br />
+                  4. sock_cl, addr = sock_sv.accept()で通信を受け付ける。<br />
+                  5. thread = threading.Thread(target=recv_client,
+                  args=(sock_cl, addr)),
+                  thread.start()によって、接続待ちでも接続中でも通信を可能になるのでどのタイミングでも通信が可能となる。<br />
+                  6. data =
+                  sock.recv(1024)でクライアント側から送信されたデータを受信する。<br />
+                  7. もし、受信データが0バイトなら接続を切断する。 8.
+                  その受信データと時刻をlog.txtに書き込む。<br />
+                </p>
+              </div>
+            </div>
+            <div class="client-zone">
+              <h3 class="sub-zone">client.py</h3>
+              <pre><code class="Python">
+import socket
+
+# サーバーIPとポート番号
+IPADDR = "localhost"
+PORT = 55000
+
+name = form.getfirst('name') # nameがnameの値を取得
+msg = form.getfirst('message') # nameがmassageの値を取得
+
+# ソケット作成
+sock = socket.socket(socket.AF_INET)
+# サーバーへ接続
+sock.connect((IPADDR, PORT))
+
+sock.send(name.encode("utf-8"))
+sock.send(" ".encode("utf-8"))
+sock.send(msg.encode("utf-8"))
+
+# 送受信の切断
+sock.shutdown(socket.SHUT_RDWR)
+# ソケットクローズ
+sock.close()
+
+# このファイルにもcgiのことを書いたがその詳細はawaiting.pyにて記述
+
+              </code></pre>
+              <div class="client-detail-zone">
+                <p>
+                  1. sock = socket.socket(socket.AF_INET)でソケットを作成する。<br>
+                  2. sock.connect((IPADDR, PORT))でサーバーに接続する。<br>
+                  3. send()でサーバーへデータを送信する。<br>
+                  4. 送信したら接続切断する。
+                </p>
+              </div>
+            </div>
+            <div class="cgi-zone">
+              <h3 class="sub-zone">awaiting.py</h3>
+              <pre><code class="Python">
+import cgi
+import cgitb
+import sys
+import io
+cgitb.enable()
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+def head_zone(): 
+    print("&lthead&gt\n")
+    print("&ltmeta charset=\&quotUTF-8\&quot /&gt\n")
+    print("&ltmeta http-equiv=\&quotX-UA-Compatible\&quot content=\&quotIE=edge\&quot /&gt\n")
+    print("&ltmeta name=\&quotviewport\&quot content=\&quotwidth=device-width, initial-scale=1.0\&quot /&gt\n")
+    print("&lttitle&gtDocument&lt/title&gt\n")
+    print("&ltlink rel=\&quotstylesheet\&quot href=\&quot../style.css\&quot /&gt\n")
+    print("&ltlink href=\&quothttps://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css\&quot rel=\&quotstylesheet\&quot integrity=\&quotsha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC\&quot crossorigin=\&quotanonymous\&quot/&gt\n")
+    print("&lt/head&gt\n")
+
+def body_zone(name, names, texts, dates):
+    print("&ltbody>\n")
+    print("&ltdiv class=\&quottitle\&quot>\n")
+    print("&lth1>皆でチャットを送りあえます&lt/h1>\n")
+    print("&lt/div>\n")
+    print("&ltform name=\&quot;form\&quot; action=\&quot;/cgi-bin/client.py\&quot; method=\&quot;POST\&quot;>\n")
+    print("&ltdiv class=\&quot;name-zone\&quot;>\n")
+    print("&lth4 class=\&quot;name\&quot;>名前</h4>\n")
+    print("&ltinput type=\&quot;text\&quot; name=\&quot;name\&quot; value=\&quot;{}\&quot;/>\n".format(name))
+    print("&lt/div>\n")
+    print("&ltdiv class=\&quot;message-zone\&quot;>\n")
+    print("&lth4 class=\&quot;name\&quot;>メッセージを入力してください</h4>\n")
+    print("&lttextarea name=\&quot;message\&quot; id=\"message\" cols=\"50\" rows=\"10\">&lt/textarea>\n")
+    print("&lt/div>\n")
+    print("&ltdiv class=\"submit-zone\">\n")
+    print("&ltinput class=\"btn btn-primary, btn btn-success\" type=\"submit\" name=\"submit-btn\" value=\"送信\" />\n")
+    print("&lt/div>\n")
+    print("&lt/form>\n")
+    log_zone(names, texts, dates)
+    print("&ltscript src=\"../index.js\">&lt/script>")
+    print("&ltscript src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js\" integrity=\"sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM\" crossorigin=\"anonymous\">&lt/script>\n")
+    print("&lt/body>\n")
+
+def log_zone(names, texts, dates):
+    print("&lttable class=\"table\">\n")
+    print("&ltthead>\n")
+    print("&lttr>\n")
+    print("&ltth scope=\"row\">#&lt/th>\n")
+    print("&ltth scope=\"row\">名前&lt/th>\n")
+    print("&ltth scope=\"row\">メッセージ&lt/th>\n")
+    print("&ltth scope=\"row\">日付&lt/th>\n")
+    print("&lttr>\n")
+    print("&lt/thead>\n")
+    i = 0
+    print("&lttbody>\n")
+    for name in names:
+        print("&lttr>\n")
+        print("&ltth scope=\"row\">{}&lt/th>\n".format(i))
+        print("&ltth scope=\"row\">{}&lt/th>\n".format(name))
+        print("&ltth scope=\"row\">{}&lt/th>\n".format(texts[i]))
+        print("&ltth scope=\"row\">{}&lt/th>\n".format(dates[i]))
+        print("&lttr>\n")
+        i += 1
+    print("&lttbody>\n")
+    print("&lt/table>\n")
+
+def log_read(names, texts, dates) :
+    f = open('C:\prog\python\socket-cgi\cgi-bin\log.txt', 'r', encoding="utf-8")
+    datalist = f.readlines()
+    for data in datalist :
+        names.append(data.split(' ')[0])
+        texts.append(data.split(' ')[1])
+        dates.append(data.split(' ')[2])
+    f.close()
+
+form = cgi.FieldStorage() # cgiオブジェクト作成
+name = form.getfirst('name') # nameがnameの値を取得
+msg = form.getfirst('message') # nameがmassageの値を取得
+
+names = list()
+texts = list()
+dates = list()
+
+log_read(names, texts, dates)
+
+# ブラウザに戻すHTMLのデータ
+print("Content-Type: text/html")
+print()
+
+print("&lt!DOCTYPE html>\n")
+print("&lthtml lang=\"ja\">\n")
+head_zone()
+body_zone(name, names, texts, dates)
+print("&lt/html>\n")
+
+              </code></pre>
+              <div class="cgi-detail-zone">
+                <p>1. form.getfirst('name')によって、POSTされた値を取得する。(nameはname属性による) <br>
+                  2. log_read()でlog.txtの内容すなわち皆のコメントの履歴を読み込む。<br>
+                  3. それからprint("Content-Type: text/html")以下のprint()の内容が、HTMLのデータとしてブラウザに戻る。<br>
+                </p>
+              </div>
+            </div>
+            <div class="js-zone">
+              <h3 class="sub-zone">index.js</h3>
+              <pre><code>
+const messeage = document.getElementById("message");
+let post = true; //ログ更新のために自動で更新するのかを判定する変数
+
+window.onload = function () {
+  let postForm = null
+
+  function event() {
+    if (post) {
+      let f = document.forms["form"];
+      f.method = "POST";
+      f.action = "/cgi-bin/awaiting.py";
+      f.submit();
+    }
+    else {
+      post = true
+    }
+  }
+  postForm = setInterval(event, 5000);
+}
+
+messeage.addEventListener("keyup", onKeyUp);
+
+function onKeyUp() {
+  post = false;
+}
+
+              </code></pre>
+              <div class="js-detail-zone">
+                <p>
+                  1. postForm = setInterval(event, 5000);でページが読み込まれてから5秒後にevent()を実行する。<br>
+                  2. event()は、log.txtを更新するためにも入力動作を行っていなかったらawaiting.pyにこれまでに入力した内容をPOSTする。<br>
+                  3. onKeyUp()は、入力しているかどうかを判断し、awaiting.pyにれまでに入力した内容をPOSTするかどうかを判断する変数であるpostをfalseにする。<br>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="operation-check-zone">
+        <div class="operation-check-title-zone">
+          <div class="title-zone">
+            <h2>動作確認</h2>
+          </div>
+        </div>
+        <div class="operation-img-zone">
+          <img src="C:\prog\Web\artifact-list\socket-cgi\socket-1.jpg" alt="">
+          <h4>図1 動作確認1</h4>
+          <img src="C:\prog\Web\artifact-list\socket-cgi\socket-2.jpg" alt="">
+          <h4>図2 動作確認2</h4>
+          <img src="C:\prog\Web\artifact-list\socket-cgi\socket-3.jpg" alt="">
+          <h4>図3 動作確認3</h4>
+        </div>
+        <div class="operation-main-zone">
+          <p>上の3枚は、別のウィンドウでメッセージを送った実行結果である。<br>
+          このように、好きなタイミングでメッセージを送りあえるのとサーバーが起動していればどのタイミングでアクセスしても問題はない。
+          </p>
+        </div>
+        <div class="improvement">
+          <div class="title-zone">
+            <h2>改善点</h2>
+          </div>
+          <p>1. 文字データだけでなく画像や音声データを送りあえるようにしたい。<br>
+            2. 特定の人のみで通信を行えるようにする。<br>
+            3. 参加者をきちんと管理するシステム<br>
+            この3つが挙げられる。
+          </p>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <div class="reference-document-zone">
+        <h4>参考文献</h4>
+        <div class="reference-document-list">
+          <p>なゆた．"PythonソケットによるTCP通信入門"．なゆた．<a href="https://nayutari.com/python-socket">https://nayutari.com/python-socket</a>.<br>
+            TSK Y．"PythonでCGIを用いたWebアプリケーションを作る"．Qiita．<a href="https://qiita.com/TSKY/items/b041de0572e6586c889c">https://qiita.com/TSKY/items/b041de0572e6586c889c</a>.<br>
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

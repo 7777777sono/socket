@@ -1,0 +1,287 @@
+.header-zone {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-top: 10px;
+}
+
+@media screen and (max-width: 480px) {
+  .header-zone {
+    font-size: 15px;
+  }
+}
+
+@media screen and (min-width: 1501px) {
+  .header-zone {
+    font-size: 27px;
+  }
+}
+
+.title-zone h2 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  border-bottom: 2px solid #21cfcc;
+}
+
+@media screen and (max-width: 800px) {
+  .title-zone {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .title-zone {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media screen and (min-width: 1501px) {
+  .title-zone {
+    font-size: 25px;
+  }
+}
+
+.sub-zone {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+@media screen and (min-width: 1501px) {
+  .text-zone,
+  .socket-description-title-zone,
+  .cgi-description-title-zone,
+  .implementation-method-main-zone,
+  .operation-main-zone,
+  .reference-document-zone,
+  .socket-description-main-zone,
+  .cgi-description-main-zone,
+  .socket-reference-zone,
+  .cgi-reference-zone,
+  .server-zone,
+  .client-zone,
+  .cgi-zone,
+  .js-zone {
+    font-size: 20px;
+  }
+}
+
+.text-zone {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+@media screen and (max-width: 800px) {
+  .text-zone {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .text-zone {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.description-zone .cgi-socket-title-zone {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+@media screen and (max-width: 800px) {
+  .description-zone .cgi-socket-title-zone {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .description-zone .cgi-socket-title-zone {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media screen and (min-width: 1501px) {
+  .description-zone .cgi-socket-title-zone {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .socket-description-title-zone,
+  .cgi-description-title-zone,
+  .implementation-method-main-zone,
+  .operation-main-zone,
+  .reference-document-zone {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .socket-description-title-zone,
+  .cgi-description-title-zone,
+  .implementation-method-main-zone,
+  .operation-main-zone,
+  .reference-document-zone {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.socket-description-main-zone,
+.cgi-description-main-zone {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+@media screen and (max-width: 800px) {
+  .socket-description-main-zone,
+  .cgi-description-main-zone {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .socket-description-main-zone,
+  .cgi-description-main-zone {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.socket-reference-zone,
+.cgi-reference-zone {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.socket-reference-zone a,
+.cgi-reference-zone a {
+  padding-left: 10px;
+  word-break: break-all;
+}
+
+@media screen and (max-width: 800px) {
+  .server-zone,
+  .client-zone,
+  .cgi-zone,
+  .js-zone {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .server-zone,
+  .client-zone,
+  .cgi-zone,
+  .js-zone {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.server-zone pre,
+.client-zone pre,
+.cgi-zone pre,
+.js-zone pre {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-line-pack: center;
+      align-content: center;
+}
+
+@media screen and (min-width: 1501px) {
+  .server-zone pre code,
+  .client-zone pre code,
+  .cgi-zone pre code,
+  .js-zone pre code {
+    font-size: 20px;
+  }
+}
+
+.operation-img-zone {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.operation-img-zone img {
+  width: 100%;
+  margin-top: 10px;
+}
+
+@media screen and (max-width: 800px) {
+  .improvement p {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .improvement p {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media screen and (min-width: 1501px) {
+  .improvement p {
+    font-size: 20px;
+  }
+}
+
+.reference-document-zone {
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.reference-document-zone .reference-document-list a {
+  word-break: break-all;
+}
+/*# sourceMappingURL=style.css.map */

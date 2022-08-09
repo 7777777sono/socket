@@ -1,0 +1,201 @@
+@charset "utf-8";
+
+@mixin width-min($width: 481px) {
+  @media screen and (min-width: $width) {
+    @content;
+  }
+}
+
+@mixin width-max($width: 480px) {
+  @media screen and (max-width: $width) {
+    @content;
+  }
+}
+
+.header-zone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  @include width-max(480px) {
+    font-size: 15px;
+  }
+  @include width-min(1501px) {
+    font-size: 27px;
+  }
+}
+
+.title-zone {
+  h2 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    border-bottom: 2px solid rgb(33, 207, 204);
+  }
+  @include width-max(800px) {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  @include width-min(801px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  @include width-min(1501px) {
+    font-size: 25px;
+  }
+}
+
+.sub-zone {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.text-zone,
+.socket-description-title-zone,
+.cgi-description-title-zone,
+.implementation-method-main-zone,
+.operation-main-zone,
+.reference-document-zone,
+.socket-description-main-zone,
+.cgi-description-main-zone,
+.socket-reference-zone,
+.cgi-reference-zone,
+.server-zone,
+.client-zone,
+.cgi-zone,
+.js-zone {
+  @include width-min(1501px) {
+    font-size: 20px;
+  }
+}
+
+.text-zone {
+  display: flex;
+  align-items: center;
+  @include width-max(800px) {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  @include width-min(801px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.description-zone {
+  .cgi-socket-title-zone {
+    display: flex;
+    align-items: center;
+    @include width-max(800px) {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+    @include width-min(801px) {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    @include width-min(1501px) {
+      font-size: 20px;
+    }
+  }
+}
+
+.socket-description-title-zone,
+.cgi-description-title-zone,
+.implementation-method-main-zone,
+.operation-main-zone,
+.reference-document-zone {
+  @include width-max(800px) {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  @include width-min(801px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.socket-description-main-zone,
+.cgi-description-main-zone {
+  display: flex;
+  flex-direction: column;
+  @include width-max(800px) {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  @include width-min(801px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.socket-reference-zone,
+.cgi-reference-zone {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  a {
+    padding-left: 10px;
+    word-break: break-all;
+  }
+}
+
+.server-zone,
+.client-zone,
+.cgi-zone,
+.js-zone {
+  @include width-max(800px) {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  @include width-min(801px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  pre {
+    width: 100%;
+    display: flex;
+    align-content: center;
+    code {
+      @include width-min(1501px) {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.operation-img-zone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  img {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+.improvement {
+  p {
+    @include width-max(800px) {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+    @include width-min(801px) {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    @include width-min(1501px) {
+      font-size: 20px;
+    }
+  }
+}
+
+.reference-document-zone {
+  margin-top: 50px;
+  margin-bottom: 20px;
+  .reference-document-list {
+    a {
+      word-break: break-all;
+    }
+  }
+}
